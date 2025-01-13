@@ -1,15 +1,11 @@
 #!/usr/bin/env terraform
-# local/cluster/provider.tf
+# local/virtual-environment/providers.tf
 
 terraform {
   required_providers {
     proxmox = {
       source = "bpg/proxmox"
       version = "0.69.1"
-    }
-    talos = {
-      source = "siderolabs/talos"
-      version = "0.7.0"
     }
   }
 }
@@ -25,5 +21,3 @@ provider "proxmox" {
     password = var.proxmox_password
   }
 }
-
-provider "talos" {}

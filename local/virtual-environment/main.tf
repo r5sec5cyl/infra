@@ -1,5 +1,5 @@
 #!/usr/bin/env terraform
-# local/cluster/main.tf
+# local/virtual-environment/main.tf
 
 resource "proxmox_virtual_environment_download_file" "talos_cloud_image_pve1" {
   content_type = "iso"
@@ -34,17 +34,17 @@ resource "proxmox_virtual_environment_vm" "talos_cp_vm" {
     file_id      = proxmox_virtual_environment_download_file.talos_cloud_image_pve1.id
     interface    = "virtio0"
     iothread     = true
-    # discard      = "on"
+    discard      = "on"
     size         = 32
   }
 
-  # initialization {
-  #   ip_config {
-  #     ipv4 {
-  #       address = "dhcp"
-  #     }
-  #   }
-  # }
+  initialization {
+    ip_config {
+      ipv4 {
+        address = "dhcp"
+      }
+    }
+  }
 
   network_device {
     bridge = "vmbr0"
@@ -53,6 +53,7 @@ resource "proxmox_virtual_environment_vm" "talos_cp_vm" {
 }
 
 resource "proxmox_virtual_environment_vm" "talos_wk1_vm" {
+  depends_on = [ proxmox_virtual_environment_vm.talos_cp_vm ]
   name      = "talos-wk1"
   node_name = "pve-1"
 
@@ -89,7 +90,8 @@ resource "proxmox_virtual_environment_vm" "talos_wk1_vm" {
 }
 
 resource "proxmox_virtual_environment_vm" "talos_wk2_vm" {
-  name      = "talos-wk1"
+  depends_on = [ proxmox_virtual_environment_vm.talos_cp_vm ]
+  name      = "talos-wk2"
   node_name = "pve-2"
 
   cpu {
